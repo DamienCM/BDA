@@ -9,6 +9,9 @@ import shutil
 import datetime
 import pyautogui
 
+ade_id=""
+ade_pass=""
+
 #semaine pas affichee dans le champ de vision ; todo
 #local path : done
 
@@ -173,8 +176,8 @@ class super_groupe: #super groupe destine a contenir les sous groupes
 driver = webdriver.Firefox()
 driver.maximize_window()
 driver.get("https://edt.insa-strasbourg.fr/direct/index.jsp")
-driver.find_element_by_xpath("""//*[@id="username"]""").send_keys("")
-driver.find_element_by_xpath("""//*[@id="password"]""").send_keys("")
+driver.find_element_by_xpath("""//*[@id="username"]""").send_keys(ade_id)
+driver.find_element_by_xpath("""//*[@id="password"]""").send_keys(ade_pass)
 driver.find_element_by_xpath("""//*[@id="password"]""").send_keys(Keys.ENTER)
 time.sleep(10)
 
