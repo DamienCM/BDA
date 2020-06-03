@@ -11,7 +11,7 @@ import pyautogui
 
 ade_id=""
 ade_pass=""
-
+nombreSemaines=5
 #semaine pas affichee dans le champ de vision ; todo
 #local path : done
 
@@ -76,14 +76,12 @@ class groupe:
 			print(f'-------------{obj.nom}-----------------')
 			if not(obj.isClicked):
 				try :
-					time.sleep(0.2)
 					driver.find_element_by_css_selector(obj.css).click()
 					obj.isClicked=True
 					print("tenative initiale de clic reussie")
 
 
 				except:
-					time.sleep(0.2)
 					print('REMONTER')
 					action = webdriver.common.action_chains.ActionChains(driver)
 					action.move_to_element_with_offset(el,5,10)
@@ -102,7 +100,6 @@ class groupe:
 				if totalCount>100:
 					raise Exception(f'Overtime : item a clicker non trouve : {obj.nom}')
 				try:
-					time.sleep(0.2)
 					driver.find_element_by_css_selector(obj.css).click()
 					obj.isClicked=True
 					print('tentative de clic reussie')
@@ -189,7 +186,7 @@ class super_groupe: #super groupe destine a contenir les sous groupes
 		m=date.month
 		y=date.year
 
-		for i in range(3):
+		for i in range(nombreSemaines):
 			for l in self.liste_edt:
 				driver.find_elements_by_xpath("//*[contains(text(), 'Semaine {}')]".format(datetime.date(y,m,d).isocalendar()[1]+i))[0].click()
 				l.refresh_picture(driver,'semaine_{}.png'.format(i))
@@ -204,7 +201,10 @@ driver.find_element_by_xpath("""//*[@id="password"]""").send_keys(Keys.ENTER)
 time.sleep(10)
 
 monSG=super_groupe()
-monSG.update_all(driver)
+try:
+	monSG.update_all(driver)
+except: 
+	pass
 
 shutil.make_archive('archivepic','zip','pic')
 
@@ -223,3 +223,4 @@ pyautogui.write(os.getcwd()+'\\' + 'archivepic.zip')
 pyautogui.press('enter')
 time.sleep(10)
 driver.quit()
+print("Programme terminé sans erreur")
