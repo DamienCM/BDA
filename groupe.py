@@ -58,6 +58,8 @@ class groupe:
 			s=l.nom[:]
 			if '_' in s:
 				s=s.replace('_','-')
+			if ' ' in s:
+				s=s.replace(' ','-')
 			ret+=s+'//'
 			RET.append(ret)
 		return RET
@@ -71,28 +73,48 @@ class groupe:
 
 		for obj in famille:
 			#remonte la page
-			time.sleep(0.2)
-			action = webdriver.common.action_chains.ActionChains(driver)
-			action.move_to_element_with_offset(el,5,10)
-			for i in range(100):
-				action.click()
-			action.perform()
+			print(f'-------------{obj.nom}-----------------')
+			if not(obj.isClicked):
+				try :
+					time.sleep(0.2)
+					driver.find_element_by_css_selector(obj.css).click()
+					obj.isClicked=True
+					print("tenative initiale de clic reussie")
+
+
+				except:
+					time.sleep(0.2)
+					print('REMONTER')
+					action = webdriver.common.action_chains.ActionChains(driver)
+					action.move_to_element_with_offset(el,5,10)
+					for i in range(100):
+						action.click()
+					action.perform()
+					time.sleep(0.3)
+			else:
+				print('already cliked')
+			
 			###
 			totalCount=0
 			while not(obj.isClicked):
 				time.sleep(0.2)
 				totalCount+=1
-				if totalCount>50:
-					raise Exception('Overtime : item a clicker non trouve')
+				if totalCount>100:
+					raise Exception(f'Overtime : item a clicker non trouve : {obj.nom}')
 				try:
+					time.sleep(0.2)
 					driver.find_element_by_css_selector(obj.css).click()
 					obj.isClicked=True
+					print('tentative de clic reussie')
+
 				except:
+					print('descente dans la page')
 					action = webdriver.common.action_chains.ActionChains(driver)
 					action.move_to_element_with_offset(el, 5, 500)
-					for i in range(3):
+					for i in range(1):
 						action.click()
 					action.perform()
+					time.sleep(0.2)
 			if obj.type=='edt':
 				obj.isClicked=False
 		time.sleep(0.5)
@@ -193,6 +215,9 @@ driver.find_element_by_xpath('''//*[@id="id_next"]''').click()
 time.sleep(1)
 driver.get('https://www.pythonanywhere.com/user/Dakaryon/files/home/Dakaryon/mysite')
 time.sleep(2)
+driver.find_element_by_xpath('/html/body/div[1]/div[2]/div[3]/div[2]/table/tbody/tr[1]/td[4]/a/i').click()
+time.sleep(0.5)
+driver.find_element_by_css_selector('#id_confirm_delete_file_1').click()
 driver.find_element_by_css_selector('#id_upload_button').click()
 pyautogui.write(os.getcwd()+'\\' + 'archivepic.zip')
 pyautogui.press('enter')
